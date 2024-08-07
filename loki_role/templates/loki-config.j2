@@ -1,0 +1,45 @@
+auth_enabled: {{ auth_enabled | default(false) }}
+
+server:
+  http_listen_port: {{ http_listen_port | default(3100) }}
+
+ingester:
+  lifecycler:
+    address: {{ ingester_lifecycler_address | default('127.0.0.1') }}
+    ring:
+      kvstore:
+        store: {{ ingester_ring_kvstore_store | default('inmemory') }}
+      replication_factor: {{ ingester_ring_replication_factor | default(1) }}
+    final_sleep: {{ ingester_final_sleep | default('0s') }}
+  chunk_idle_period: {{ ingester_chunk_idle_period | default('5m') }}
+  chunk_retain_period: {{ ingester_chunk_retain_period | default('30s') }}
+  max_transfer_retries: {{ ingester_max_transfer_retries | default(0) }}
+
+schema_config:
+  configs:
+    - from: {{ schema_config_from | default('2018-04-15') }}
+      store: {{ schema_config_store | default('boltdb') }}
+      object_store: {{ schema_config_object_store | default('filesystem') }}
+      schema: {{ schema_config_schema | default('v11') }}
+      index:
+        prefix: {{ schema_config_index_prefix | default('index_') }}
+        period: {{ schema_config_index_period | default('168h') }}
+
+storage_config:
+  boltdb:
+    directory: {{ storage_config_boltdb_directory | default('/data/loki/index') }}
+
+  filesystem:
+    directory: {{ storage_config_filesystem_directory | default('/data/loki/chunks') }}
+
+limits_config:
+  enforce_metric_name: {{ limits_config_enforce_metric_name | default(false) }}
+  reject_old_samples: {{ limits_config_reject_old_samples | default(true) }}
+  reject_old_samples_max_age: {{ limits_config_reject_old_samples_max_age | default('168h') }}
+
+chunk_store_config:
+  max_look_back_period: {{ chunk_store_config_max_look_back_period | default('0s') }}
+
+table_manager:
+  retention_deletes_enabled: {{ table_manager_retention_deletes_enabled | default(false) }}
+  retention_period: {{ table_manager_retention_period | default('0s') }}

@@ -60,8 +60,8 @@
 
 
 - name: Copying the config file content
-  ansible.builtin.copy:
-    src: files/loki-config.yml
+  ansible.builtin.template:
+    src: files/loki-config.j2
     dest: /etc/loki/loki-local-config.yaml
 
 - name: Creating service file
@@ -70,8 +70,8 @@
     state: touch
 
 - name: Reload systemd manager configuration
-  ansible.builtin.command:
-    cmd: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
 
 - name: Copying the system file content
   ansible.builtin.copy:

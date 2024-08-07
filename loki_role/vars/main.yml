@@ -3,9 +3,41 @@
 loki_version: "2.9.9"
 promtail_version: "2.9.9"
 
-run_grafana_tasks: true
-run_loki_tasks: true
+run_grafana_tasks: false
+run_loki_tasks: false
 run_promtail_tasks: true
 run_nginx_tasks: false
 
 
+###############[loki config file ]###################################
+
+auth_enabled: false
+
+http_listen_port: 3100
+
+ingester_lifecycler_address: '127.0.0.1'
+ingester_ring_kvstore_store: 'inmemory'
+ingester_ring_replication_factor: 1
+ingester_final_sleep: '0s'
+ingester_chunk_idle_period: '5m'
+ingester_chunk_retain_period: '30s'
+ingester_max_transfer_retries: 0
+
+schema_config_from: '2018-04-15'
+schema_config_store: 'boltdb'
+schema_config_object_store: 'filesystem'
+schema_config_schema: 'v11'
+schema_config_index_prefix: 'index_'
+schema_config_index_period: '96h'
+
+storage_config_boltdb_directory: '/data/loki/index'
+storage_config_filesystem_directory: '/data/loki/chunks'
+
+limits_config_enforce_metric_name: false
+limits_config_reject_old_samples: true
+limits_config_reject_old_samples_max_age: '48h'
+
+chunk_store_config_max_look_back_period: '0s'
+
+table_manager_retention_deletes_enabled: false
+table_manager_retention_period: '0s'

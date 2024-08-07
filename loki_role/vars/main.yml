@@ -6,7 +6,7 @@ promtail_version: "2.9.9"
 run_grafana_tasks: false
 run_loki_tasks: false
 run_promtail_tasks: true
-run_nginx_tasks: false
+
 
 
 ###############[loki config file ]###################################

@@ -78,5 +78,4 @@
     src: files/loki-service
     dest: /etc/systemd/system/loki.service
   notify: Restart loki
-  tags: 
-    - changing_service_file
+  

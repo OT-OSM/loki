@@ -1,0 +1,18 @@
+server:
+  http_listen_port: {{ server_http_listen_port | default(9080) }}
+  grpc_listen_port: {{ server_grpc_listen_port | default(0) }}
+
+positions:
+  filename: {{ positions_filename | default('/data/loki/positions.yaml') }}
+
+clients:
+  - url: {{ clients_url | default('http://localhost:3100/loki/api/v1/push') }}
+
+scrape_configs:
+  - job_name: {{ scrape_configs_job_name | default('system') }}
+    static_configs:
+      - targets:
+          - {{ scrape_configs_static_configs_targets | default('localhost') }}
+        labels:
+          job: {{ scrape_configs_labels_job | default('varlogs') }}
+          __path__: {{ scrape_configs_labels_path | default('/var/log/*log') }}

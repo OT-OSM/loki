@@ -1,0 +1,14 @@
+[Unit]
+Description=Alertmanager
+After=network.target
+
+[Service]
+Type=simple
+User=alertmanager
+Group=alertmanager
+ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/var/lib/alertmanager
+Restart=always
+MemoryLimit=256M
+
+[Install]
+WantedBy=multi-user.target

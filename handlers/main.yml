@@ -1,6 +1,6 @@
 ---
-- name: Restart Alertmanager
+- name: Restart Loki
   systemd:
-    name: alertmanager
+    name: loki
     state: restarted
     daemon_reload: yes

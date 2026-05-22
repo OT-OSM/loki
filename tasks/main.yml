@@ -1,66 +1,69 @@
 ---
-- name: Create alertmanager group
+- name: Create loki group
   group:
-    name: alertmanager
+    name: loki
     state: present
 
-- name: Create alertmanager user
+- name: Create loki user
   user:
-    name: alertmanager
-    group: alertmanager
+    name: loki
+    group: loki
     system: yes
     shell: /usr/sbin/nologin
 
-- name: Create directories
+- name: Create required directories
   file:
     path: "{{ item }}"
     state: directory
-    owner: alertmanager
-    group: alertmanager
+    owner: loki
+    group: loki
+    mode: '0755'
   loop:
-    - /etc/alertmanager
-    - /var/lib/alertmanager
+    - /etc/loki
+    - /var/lib/loki
+    - /var/lib/loki/compactor
 
-- name: Download Alertmanager
+- name: Install unzip on Ubuntu
+  ansible.builtin.apt:
+    name: unzip
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Download Loki binary
   get_url:
-    url: "https://github.com/prometheus/alertmanager/releases/download/v0.27.0/alertmanager-0.27.0.linux-amd64.tar.gz"
-    dest: "/tmp/alertmanager.tar.gz"
+    url: "https://github.com/grafana/loki/releases/download/v3.4.2/loki-linux-amd64.zip"
+    dest: "/tmp/loki.zip"
 
-
-- name: Create temporary extraction folder
-  file:
-    path: /tmp/alertmanager_extract
-    state: directory
-    mode: '0755'
-
-- name: Extract Alertmanager
+- name: Unarchive Loki binary
   unarchive:
-    src: "/tmp/alertmanager.tar.gz"
-    dest: "/tmp/alertmanager_extract"
+    src: "/tmp/loki.zip"
+    dest: "/usr/local/bin/"
     remote_src: yes
+    creates: /usr/local/bin/loki-linux-amd64
 
-- name: Move binary
+- name: Rename binary for simplicity
   copy:
-    src: "/tmp/alertmanager_extract/alertmanager-0.27.0.linux-amd64/alertmanager"
-    dest: "/usr/local/bin/alertmanager"
+    src: /usr/local/bin/loki-linux-amd64
+    dest: /usr/local/bin/loki
     mode: '0755'
     remote_src: yes
 
-- name: Deploy Config
+- name: Deploy Loki Configuration
   template:
-    src: alertmanager.yml.j2
-    dest: /etc/alertmanager/alertmanager.yml
-  notify: Restart Alertmanager
+    src: loki-config.yaml.j2
+    dest: /etc/loki/loki-config.yaml
+    owner: loki
+    group: loki
 
-- name: Setup Service
+- name: Setup Systemd Service
   template:
-    src: alertmanager.service.j2
-    dest: /etc/systemd/system/alertmanager.service
-  notify: Restart Alertmanager
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
 
-- name: Start Alertmanager
+- name: Start and Enable Loki
   systemd:
-    name: alertmanager
+    name: loki
     state: started
     enabled: yes
     daemon_reload: yes

@@ -49,8 +49,6 @@ ansible-galaxy collection install community.general
 
 ```
 loki/
-├── vars/
-│   └── main.yml              # Internal role variables (higher precedence)
 ├── tasks/
 │   └── main.yml              # Main task entry point
 ├── handlers/
@@ -92,27 +90,7 @@ Jinja2 template that renders the systemd unit file installed to `/etc/systemd/sy
 
 ---
 
-## Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `loki_version` | `3.0.0` | Version of Loki to install |
-| `loki_arch` | `linux_amd64` | Target architecture for the binary download (`linux_amd64`, `linux_arm64`) |
-| `loki_user` | `loki` | System user that runs the service |
-| `loki_group` | `loki` | System group for the service user |
-| `loki_http_port` | `3100` | Port for the Loki HTTP API and health endpoint |
-| `loki_grpc_port` | `9096` | Port for the Loki gRPC API |
-| `loki_config_dir` | `/etc/loki` | Directory for configuration files |
-| `loki_data_dir` | `/var/lib/loki` | Directory for persistent chunks, index, and WAL data |
-| `loki_install_dir` | `/usr/local/bin` | Directory for the installed binary |
-| `loki_storage_backend` | `filesystem` | Storage backend to use (`filesystem`, `s3`, `gcs`, `azure`) |
-| `loki_retention_period` | `744h` | How long to retain log data (default 31 days) |
-| `loki_ingestion_rate_mb` | `4` | Per-tenant ingestion rate limit in MB/s |
-| `loki_ingestion_burst_size_mb` | `6` | Per-tenant ingestion burst size limit in MB |
-
-> Override any variable in your playbook, inventory, or via `--extra-vars`.
-
----
 
 ## Usage
 

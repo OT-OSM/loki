@@ -4,14 +4,15 @@ After=network.target
 
 [Service]
 Type=simple
-User=loki
-Group=loki
-# Single-binary execution
-ExecStart=/usr/local/bin/loki -config.file=/etc/loki/loki-config.yaml
+User={{ loki_user }}
+Group={{ loki_group }}
 
-# Memory and Resource Management
-MemoryLimit=1G
-CPUQuota=50%
+ExecStart={{ loki_install_dir }}/loki \
+-config.file={{ loki_config_dir }}/loki-config.yaml
+
+MemoryLimit={{ loki_memory_limit }}
+CPUQuota={{ loki_cpu_quota }}
+
 Restart=on-failure
 
 [Install]

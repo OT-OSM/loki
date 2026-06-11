@@ -1,69 +1,9 @@
 ---
-- name: Create loki group
-  group:
-    name: loki
-    state: present
+- name: Install Loki
+  ansible.builtin.include_tasks: install.yml
 
-- name: Create loki user
-  user:
-    name: loki
-    group: loki
-    system: yes
-    shell: /usr/sbin/nologin
+- name: Configure Loki
+  ansible.builtin.include_tasks: config.yml
 
-- name: Create required directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: loki
-    group: loki
-    mode: '0755'
-  loop:
-    - /etc/loki
-    - /var/lib/loki
-    - /var/lib/loki/compactor
-
-- name: Install unzip on Ubuntu
-  ansible.builtin.apt:
-    name: unzip
-    state: present
-    update_cache: yes
-  become: yes
-
-- name: Download Loki binary
-  get_url:
-    url: "https://github.com/grafana/loki/releases/download/v3.4.2/loki-linux-amd64.zip"
-    dest: "/tmp/loki.zip"
-
-- name: Unarchive Loki binary
-  unarchive:
-    src: "/tmp/loki.zip"
-    dest: "/usr/local/bin/"
-    remote_src: yes
-    creates: /usr/local/bin/loki-linux-amd64
-
-- name: Rename binary for simplicity
-  copy:
-    src: /usr/local/bin/loki-linux-amd64
-    dest: /usr/local/bin/loki
-    mode: '0755'
-    remote_src: yes
-
-- name: Deploy Loki Configuration
-  template:
-    src: loki-config.yaml.j2
-    dest: /etc/loki/loki-config.yaml
-    owner: loki
-    group: loki
-
-- name: Setup Systemd Service
-  template:
-    src: loki.service.j2
-    dest: /etc/systemd/system/loki.service
-
-- name: Start and Enable Loki
-  systemd:
-    name: loki
-    state: started
-    enabled: yes
-    daemon_reload: yes
+- name: Setup Loki Service
+  ansible.builtin.include_tasks: service.yml

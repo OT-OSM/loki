@@ -1,0 +1,21 @@
+---
+loki_version: "3.4.2"
+
+loki_user: "loki"
+loki_group: "loki"
+
+loki_http_port: 3100
+loki_grpc_port: 9096
+
+loki_install_dir: "/usr/local/bin"
+loki_config_dir: "/etc/loki"
+
+loki_data_dir: "/var/lib/loki"
+loki_compactor_dir: "/var/lib/loki/compactor"
+
+loki_memory_limit: "1G"
+loki_cpu_quota: "50%"
+
+loki_retention_period: "7d"
+
+loki_download_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip"

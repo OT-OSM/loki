@@ -1,49 +1,43 @@
 auth_enabled: false
 
 server:
-  http_listen_port: 3100
-  grpc_listen_port: 9096
+  http_listen_port: {{ loki_http_port }}
+  grpc_listen_port: {{ loki_grpc_port }}
 
 common:
   instance_addr: 127.0.0.1
-  path_prefix: /var/lib/loki
+  path_prefix: {{ loki_data_dir }}
+
   storage:
     filesystem:
-      chunks_directory: /var/lib/loki/chunks
-      rules_directory: /var/lib/loki/rules
+      chunks_directory: {{ loki_data_dir }}/chunks
+      rules_directory: {{ loki_data_dir }}/rules
+
   replication_factor: 1
+
   ring:
     kvstore:
       store: inmemory
 
 ingester:
   chunk_encoding: snappy
-  lifecycler:
-    address: 127.0.0.1
-    ring:
-      kvstore:
-        store: inmemory
-      replication_factor: 1
-    final_sleep: 0s
-  chunk_idle_period: 1h
-  max_chunk_age: 1h
-  chunk_target_size: 1048576
 
 schema_config:
   configs:
     - from: 2024-04-01
       store: tsdb
-      object_store: filesystem # Using local FS instead of S3 for simple VM setup
+      object_store: filesystem
       schema: v13
+
       index:
         prefix: loki_index_
         period: 24h
 
 limits_config:
-  retention_period: 7d
+  retention_period: {{ loki_retention_period }}
 
 compactor:
-  working_directory: /var/lib/loki/compactor
+  working_directory: {{ loki_compactor_dir }}
   compaction_interval: 10m
   retention_enabled: true
   retention_delete_delay: 2h

@@ -1,0 +1,9 @@
+---
+- name: Install Loki
+  ansible.builtin.include_tasks: install.yml
+
+- name: Configure Loki
+  ansible.builtin.include_tasks: config.yml
+
+- name: Setup Loki Service
+  ansible.builtin.include_tasks: service.yml

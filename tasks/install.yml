@@ -1,0 +1,50 @@
+---
+- name: Create Loki group
+  ansible.builtin.group:
+    name: "{{ loki_group }}"
+    state: present
+
+- name: Create Loki user
+  ansible.builtin.user:
+    name: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name: "{{ loki_packages }}"
+    state: present
+    update_cache: true
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    mode: "0755"
+  loop:
+    - "{{ loki_config_dir }}"
+    - "{{ loki_data_dir }}"
+    - "{{ loki_compactor_dir }}"
+
+- name: Download Loki
+  ansible.builtin.get_url:
+    url: "{{ loki_download_url }}"
+    dest: /tmp/loki.zip
+    mode: "0644"
+
+- name: Extract Loki
+  ansible.builtin.unarchive:
+    src: /tmp/loki.zip
+    dest: "{{ loki_install_dir }}"
+    remote_src: true
+    creates: "{{ loki_install_dir }}/loki-linux-amd64"
+
+- name: Install Loki Binary
+  ansible.builtin.copy:
+    src: "{{ loki_install_dir }}/loki-linux-amd64"
+    dest: "{{ loki_install_dir }}/loki"
+    mode: "0755"
+    remote_src: true

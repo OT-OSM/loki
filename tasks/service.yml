@@ -1,0 +1,14 @@
+---
+- name: Deploy Loki systemd service
+  ansible.builtin.template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+    mode: "0644"
+  notify: Restart Loki
+
+- name: Enable and start Loki
+  ansible.builtin.systemd:
+    name: loki
+    state: started
+    enabled: true
+    daemon_reload: true

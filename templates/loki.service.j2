@@ -1,0 +1,19 @@
+[Unit]
+Description=Loki Log Aggregation System
+After=network.target
+
+[Service]
+Type=simple
+User={{ loki_user }}
+Group={{ loki_group }}
+
+ExecStart={{ loki_install_dir }}/loki \
+-config.file={{ loki_config_dir }}/loki-config.yaml
+
+MemoryLimit={{ loki_memory_limit }}
+CPUQuota={{ loki_cpu_quota }}
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

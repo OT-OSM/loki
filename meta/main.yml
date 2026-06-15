@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  role_name: loki
+  author: Shubham Rathi
+  description: Ansible role to install, configure, and manage Grafana Loki log aggregation service.
+  license: MIT
+
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+  galaxy_tags:
+    - loki
+    - grafana
+    - logging
+    - observability
+    - monitoring
+
+dependencies: []

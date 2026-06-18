@@ -1,0 +1,21 @@
+---
+# Handlers file for loki_role
+
+- name: Restart Loki service
+  ansible.builtin.systemd:
+    name: loki
+    state: restarted
+    enabled: true
+
+- name: Start Grafana service
+  ansible.builtin.systemd:
+    name: grafana-server
+    state: started
+    enabled: true
+
+- name: Start Promtail service
+  ansible.builtin.systemd:
+    name: promtail
+    state: started
+    enabled: true
+

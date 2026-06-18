@@ -1,0 +1,7 @@
+---
+- name: Update web servers
+  hosts: all
+  remote_user: ubuntu
+  become: true
+  roles:
+    - loki_role

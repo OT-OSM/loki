@@ -1,0 +1,81 @@
+---
+- name: updating cache of ubuntu
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install unzip, bzip2, xz-utils, and zstd
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - bzip2
+      - xz-utils
+      - zstd
+    state: present
+
+- name: Download Binaries for loki
+  ansible.builtin.get_url:
+    url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip"
+    dest: /home/ubuntu/
+    mode: '755'
+
+- name: Unarchive a file 
+  ansible.builtin.unarchive:
+    src: "/home/ubuntu/loki-linux-amd64.zip"
+    dest: /home/ubuntu/
+    remote_src: yes
+
+
+- name: Add the user 'loki'
+  ansible.builtin.user:
+    name: loki
+    state: present
+    system: true
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: /home/ubuntu/loki-linux-amd64 
+    dest: /usr/local/bin/loki
+    owner: loki
+    group: loki
+    mode: '755'
+    remote_src: true
+
+
+- name: Creating directory for config file
+  ansible.builtin.file:
+    path: "{{ item }}" 
+    state: directory
+    owner: loki
+    group: loki
+    mode: '755'
+    recurse: true
+  loop: 
+    - /etc/loki/logs
+    - /data/loki
+
+- name: Creating Config file
+  ansible.builtin.file:
+    path: /etc/loki/loki-local-config.yaml 
+    state: touch
+
+
+- name: Copying the config file content
+  ansible.builtin.template:
+    src: templates/loki-config.j2
+    dest: /etc/loki/loki-local-config.yaml
+
+- name: Creating service file
+  ansible.builtin.file:
+    path: /etc/systemd/system/loki.service
+    state: touch
+
+- name: Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Copying the system file content
+  ansible.builtin.copy:
+    src: files/loki-service
+    dest: /etc/systemd/system/loki.service
+  notify: Restart loki
+  
